@@ -4,8 +4,8 @@ try:
     mydb = ms.connect(
         host = "127.0.0.1",
         user = "root",
-        password = "Admin1234",
-        database = "db4710",
+        password = "Junebug05_",
+        database = "db4710_proj",
     )
     if mydb.is_connected():
         print("Sucess!")
@@ -15,7 +15,7 @@ try:
         for x in mycur:
             print(x)    
     
-except _mysql_connector.Error as e:
+except ms.connector.Error as e:
     print("Error", e)
 
 
