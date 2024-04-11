@@ -4,8 +4,13 @@ import mysql.connector as ms
 app=Flask(__name__)
 
 @app.route("/") #home page
-def home():
+def ogLogin():
     return render_template('login.html')
+
+@app.route("/home")
+def homePage():
+    return render_template('index.html')
+
 
 @app.route("/login",methods = ['Post', 'Get'])
 def login():
@@ -46,6 +51,11 @@ def login():
 
         return render_template("index.html")
 
+'''@app.route("/addArtist",methods = ['Post', 'Get'])
+def addArtist():
+    if request.method == 'POST':
+
+'''
 #login screen
 #home page
 # show playlist
