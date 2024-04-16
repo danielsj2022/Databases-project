@@ -76,6 +76,61 @@ def addArtistName():
 
         return render_template("index.html")
 
+@app.route("/addSong", methods=['Post', 'Get'])
+def addSong():
+    return render_template("addSong.html")
+@app.route("/deleteSong", methods=['Post', 'Get'])
+def deleteSong():
+    return render_template("deleteSong.html")
+@app.route("/searchSong", methods=['Post', 'Get'])
+def searchSong():
+    return render_template("searchSong.html")
+
+@app.route("/addSongName", methods=['Post', 'Get'])
+def addSongName():
+    if request.method == 'Post':
+        artist=request.form['artName']
+        song=request.form['songName']
+
+        mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Admin1234",
+        database = "db4710",
+        )
+        mycur=mydb.cursor()
+
+        try:
+            mycur.execute("SELECT * FROM writes WHERE sname = %s AND aname = %s", (song, artist))
+            if mycur.fetchone() is not None:
+                msg= "This song and artist combination already exists in the database."
+
+            # Check if the artist exists in the 'artist' table
+            mycur.execute("SELECT * FROM artist WHERE aname = %s", (artist,))
+            artist_result = mycur.fetchone()
+        
+            # Insert the artist if not found
+            if artist_result is None:
+                insert_artist_sql = "INSERT INTO artist (aname) VALUES (%s)"
+                mycur.execute(insert_artist_sql, (artist,))
+                mydb.commit()
+
+            mycur.execute("SELECT * FROM music WHERE sname = %s", (song,))
+            result = mycur.fetchone()
+
+            # If the song doesn't exist in the 'music' table, insert it
+            if result is None:
+                mycur.execute("INSERT INTO music (sname, artist) VALUES (%s, %s)", (song, artist))
+                mydb.commit()
+
+        # Now that the song exists in the 'music' table, insert the record into the 'writes' table
+            mycur.execute("INSERT INTO writes (sname, aname) VALUES (%s, %s)", (song, artist))
+            mydb.commit()  # Commit to save changes to the database
+
+            #return render_template("index.html")
+        finally:
+            return render_template("index.html")
+
 #login screen
 #home page
 # show playlist
