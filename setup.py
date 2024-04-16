@@ -55,6 +55,7 @@ access_token = get_token()
 
 #fetch albums from spotify api
 def album_auth(access_token):
+      
     headers = {'Authorization': 'Bearer ' + access_token}
     params = {'limit':50}
     response = requests.get('https://api.spotify.com/v1/browse/new-releases',headers=headers)
@@ -94,6 +95,9 @@ def insert_albums(albums):
     except ms.connector.Error as e:
         print("Error:", e)
 
+
 albums = album_auth(access_token)
 insert_albums(albums)
+
+
 
