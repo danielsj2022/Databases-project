@@ -51,11 +51,29 @@ def login():
 
         return render_template("index.html")
 
-'''@app.route("/addArtist",methods = ['Post', 'Get'])
+@app.route("/addArtist",methods = ['Post', 'Get'])
 def addArtist():
-    if request.method == 'POST':
+    return render_template("addFavArtist.html")
 
-'''
+@app.route("/addArtistName",methods= ['Post', 'Get'])
+def addArtistName():
+    if request.method == 'POST':
+        artistName=request.form['artName']
+        genre
+
+        mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Admin1234",
+        database = "db4710",
+        )
+        
+        mycur=mydb.cursor()
+        mycur.execute("insert into artist(aname, agenre) values (%s, %s)", (artistName, genre))
+        mydb.commit()
+
+        return render_template("index.html")
+
 #login screen
 #home page
 # show playlist
