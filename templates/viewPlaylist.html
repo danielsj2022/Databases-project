@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+    <body>
+        <h1>View Playlist</h1>
+        <table border=1>
+            <thead>
+                <td>Song</td>
+                <td>Artist</td>
+                <td>Genre</td>
+                
+            </thead>
+
+            {% for row in rows %}
+                <tr>
+                    <td>{{row["sname"]}}</td>
+                    <td>{{row["aname"]}}</td>
+                    <td>{{row["agenre"]}}</td>
+                    
+                    </tr>
+            {% endfor %}    
+
+        </table>
+        <p><a href="/home">Back to home</a></p>
+    </body>
+</html>
