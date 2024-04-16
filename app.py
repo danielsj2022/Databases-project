@@ -61,6 +61,8 @@ def addArtistName():
         artistName=request.form['artName']
         genre
 
+        #where to add func for api and grab first name and genre to put in db
+
         mydb = ms.connect(
         host = "127.0.0.1",
         user = "root",
