@@ -74,3 +74,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    ### implement artist name into app.py respoinse will get save into a varriable name and genre implment
+     ##that into datbase saved into artist table saved into listens to artist name is put into listes to only take the top item
+    ##implemnt into add artist name 
+    ## connect api to backend  
