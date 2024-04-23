@@ -67,23 +67,25 @@ def addArtistName():
             mycur = mydb.cursor()
 
             try:
-                mycur.execute("SELECT * FROM writes WHERE aname = %s AND agenre = %s", (artist))
+                mycur.execute("SELECT * FROM artist WHERE aname = %s AND agenre = %s", (artist, genre))
                 if mycur.fetchone() is not None:
                     return "This artist and genre combination already exists in the database."
             
-                mycur.execute("SELECT * FROM artist WHERE sname = %s", (artist))
+                mycur.execute("SELECT * FROM writes WHERE aname = %s", (artist))
                 artist_result = mycur.fetchone()
 
                 if artist_result is None:
-                    insert_artist_sql = "INSERT INTO artist (sname, genre) VALUES (%s,%s)"
-                    mycur.execute(insert_artist_sql, (artist, genre))
+                    insert_artist_sql = "INSERT INTO writes (aname) VALUES (%s)"
+                    mycur.execute(insert_artist_sql, (artist))
                     mydb.commit()
 
-                mycur.execute("INSERT INTO music (aname, ) VALUES (%s)", (artist))
-                mydb.commit()
+                mycur.execute("SELECT * FROM music WHERE aname = %s", (artist))
+                artist_result = mycur.fetchone()
+                if artist_result is None:
+                    mycur.execute("INSERT INTO music (aname,) VALUES (%s)", (artist))
+                    mydb.commit()  
 
-                mycur.execute("INSERT INTO writes (aname,) VALUES (%s)", (artist))
-                mydb.commit()  
+                mycur.execute("INSERT INRO artist (aname, agenre) VALUES (%s, %s)," (artist, genre))
 
                 return "Artist added successfully"
         
