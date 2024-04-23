@@ -86,11 +86,147 @@ def deleteSong():
 def searchSong():
     return render_template("searchSong.html")
 
+@app.route("/searchSongName", methods=['Post', 'Get'])
+def searchSongName():
+    if request.method == 'POST':
+        song = request.form['songName']
+        artist = request.form['artName']
+
+        mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Admin1234",
+        database = "db4710",
+        )
+        mycur=mydb.cursor()
+
+        try:
+            #Check if the song and artist are in the writes table
+            mycur.execute("SELECT * FROM writes WHERE sname = %s AND aname = %s", (song, artist))
+            if mycur.fetchone() is None:
+                msg= "No such song and artist combination exists in the database."
+                return render_template("result.html",msg = msg)
+            
+            #show user the song and artist
+            #return f"Artist: {artist}, Song: {song}"
+            msg= "Artist: " + artist + ", Song: " + song
+            return render_template("result.html",msg = msg)
+        except ms.Error as error:
+            print("Failed to search song:", error)
+            return "Database error occurred: " + str(error)
+        finally:
+            mycur.close()
+            mydb.close()
+
+@app.route("/viewPlaylist")
+def viewPlaylist():
+    mydb = ms.connect(
+    host = "127.0.0.1",
+    user = "root",
+    password = "Admin1234",
+    database = "db4710",
+    )
+    #mydb.row_factory = ms.rows
+    mycur=mydb.cursor()
+
+    try:
+        mycur.execute("SELECT sname, aname, agenre FROM music, artist where artist=aname")
+        songs = mycur.fetchall()
+
+        if not songs:
+            msg ="Playlist empty"
+            return render_template("result.html",msg = msg)
+        
+        #display the artist
+        return render_template("viewPlaylist.html", rows=songs)
+    
+    except ms.Error as error:
+        print("Failed to show playlist:, error")
+        return "Database error occured: " + str(error)
+    finally:
+        mycur.close()
+        mydb.close()
+
+
+
+@app.route("/viewFavArtist")
+def viewFavArtist():
+    #if request.method == 'POST':
+    mydb = ms.connect(
+    host = "127.0.0.1",
+    user = "root",
+    password = "Admin1234",
+    database = "db4710",
+    )
+    mycur=mydb.cursor()
+
+    try:
+        mycur.execute("SELECT aname FROM artist")
+        artists = mycur.fetchall()
+
+        if not artists:
+            msg ="No artists were found"
+            return render_template("result.html",msg = msg)
+        
+        #display the artist
+        return render_template("viewFavArtist.html", rows=artists)
+    
+    except ms.Error as error:
+        print("Failed to show favorite artists:, error")
+        return "Database error occured: " + str(error)
+    finally:
+        mycur.close()
+        mydb.close()
+
+@app.route("/deleteSongName", methods=['Post', 'Get'])
+def deleteSongName():
+    if request.method == 'POST':
+        song = request.form['songName']
+        artist = request.form['artName']
+
+        mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Admin1234",
+        database = "db4710",
+        )
+        mycur=mydb.cursor()
+
+        try:
+            # Check if the song and artist combination exists in the 'writes' table
+            mycur.execute("SELECT * FROM writes WHERE sname = %s AND aname = %s", (song, artist))
+            if mycur.fetchone() is None:
+                return "No such song and artist combination exists in the database."
+
+           
+            # Delete the song from the 'writes' table first
+            mycur.execute("DELETE FROM writes WHERE sname = %s AND aname = %s", (song, artist))
+            mydb.commit()
+
+            # Then delete the song from the 'music' table
+            mycur.execute("DELETE FROM music WHERE sname = %s", (song,))
+            mydb.commit()
+            #return "Song and related data deleted successfully"
+            return render_template("index.html")
+        
+        except ms.Error as error:
+            print("Failed to delete record:", error)
+            return "Database error occurred: " + str(error)
+
+            return render_template("deleteSong.html")
+        finally:
+            if mydb.is_connected():
+                mycur.close()
+                mydb.close()
+                
+
 @app.route("/addSongName", methods=['Post', 'Get'])
 def addSongName():
-    if request.method == 'Post':
+    if request.method == 'POST':
         artist=request.form['artName']
         song=request.form['songName']
+        print("artist name: ", artist)
+        print("song name: ", song)
 
         mydb = ms.connect(
         host = "127.0.0.1",
@@ -104,7 +240,7 @@ def addSongName():
         try:
             mycur.execute("SELECT * FROM writes WHERE sname = %s AND aname = %s", (song, artist))
             if mycur.fetchone() is not None:
-                msg= "This song and artist combination already exists in the database."
+                return "This song and artist combination already exists in the database."
 
             # Check if the artist exists in the 'artist' table
             mycur.execute("SELECT * FROM artist WHERE aname = %s", (artist,))
@@ -128,19 +264,26 @@ def addSongName():
             mycur.execute("INSERT INTO writes (sname, aname) VALUES (%s, %s)", (song, artist))
             mydb.commit()  # Commit to save changes to the database
 
-            return render_template("index.html")
+            return "Song and artist added successfully"
+
+
+            
         except ms.Error as error:
             print("Failed to insert record into writes table: {}".format(error))
-            msg= "Database error occurred"
+            return "Database error occurred"
         
         finally:
             if mydb.is_connected():
                 mycur.close()
                 mydb.close()
-                return render_template("index.html",msg=msg)
-        '''
-        finally:
-            return render_template("index.html")'''
+                return render_template("index.html")
+            
+    elif request.method == "GET":
+        # Assume there's a template 'add_song.html' that contains the form for adding a song.
+        return render_template("add_song.html")
+
+    return "Unsupported request method or failed to connect to the database"     
+
 
 #login screen
 #home page

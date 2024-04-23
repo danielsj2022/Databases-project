@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-
 <html>
     <body>
-        <h1>View Playlist</h1>
+        <h1>View Favorite Artist</h1>
         <table border=1>
             <thead>
-                <td>Song</td>
                 <td>Artist</td>
-                <td>Genre</td>
-               
                 
             </thead>
 
             {% for row in rows %}
                 <tr>
+                    
                     <td>{{row[0]}}</td>
-                    <td>{{row[1]}}</td>
-                    <td>{{row[2]}}</td>
+                   
                     
                     </tr>
             {% endfor %}    
