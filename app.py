@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import mysql.connector as ms
 
+
 app=Flask(__name__)
 
 @app.route("/") #home page
@@ -26,8 +27,8 @@ def login():
         mydb = ms.connect(
         host = "127.0.0.1",
         user = "root",
-        password = "Admin1234",
-        database = "db4710",
+        password = "Junebug05_",
+        database = "db4710_proj",
         )
         mycur=mydb.cursor()
         print(logUser, logPas, "create user ",createUser, createPass)
@@ -51,30 +52,58 @@ def login():
 
         return render_template("index.html")
 
-@app.route("/addArtist",methods = ['Post', 'Get'])
-def addArtist():
-    return render_template("addFavArtist.html")
-
-@app.route("/addArtistName",methods= ['Post', 'Get'])
+@app.route("/addArtistName",methods= ['POST', 'GET'])
 def addArtistName():
-    if request.method == 'POST':
-        artistName=request.form['artName']
-        genre
-
-        #where to add func for api and grab first name and genre to put in db
-
-        mydb = ms.connect(
-        host = "127.0.0.1",
-        user = "root",
-        password = "Admin1234",
-        database = "db4710",
-        )
+        if request.method == "POST":
+            artist = request.form['artName']
+            genre = request.form['genre']
         
-        mycur=mydb.cursor()
-        mycur.execute("insert into artist(aname, agenre) values (%s, %s)", (artistName, genre))
-        mydb.commit()
+            mydb = ms.connect(
+            host="127.0.0.1",
+            user="root",
+            password="Junebug05_",
+            database="db4710_proj",
+        )
+        mycur = mydb.cursor()
 
-        return render_template("index.html")
+        try:
+            mycur.execute("SELECT * FROM writes WHERE aname = %s AND agenre = %s", (artist))
+            if mycur.fetchone() is not None:
+                return "This artist and genre combination already exists in the database."
+            
+            mycur.execute("SELECT * FROM artist WHERE sname = %s", (artist,))
+            artist_result = mycur.fetchone()
+
+            if artist_result is None:
+                insert_artist_sql = "INSERT INTO artist (sname, genre) VALUES (%s,%s)"
+                mycur.execute(insert_artist_sql, (artist, genre))
+                mydb.commit()
+
+            mycur.execute("INSERT INTO music (aname, ) VALUES (%s, %s)", (artist))
+            mydb.commit()
+
+            mycur.execute("INSERT INTO writes (aname,) VALUES (%s, %s)", (artist))
+            mydb.commit()  
+
+            return "Artist added successfully"
+        
+        except ms.Error as error:
+            print("Failed to insert record into writes table: {}".format(error))
+            return "Database error occurred"
+        
+        finally:
+            if mydb.is_connected():
+                mycur.close()
+                mydb.close()
+                return render_template("index.html")
+            
+            elif request.method == "GET":
+                return render_template("addFavArtist.html")
+
+            return "Unsupported request method or failed to connect to the database"
+    
+
+        #where to add func for api and grab first name and genre to put in db if its already in rhe other table then insert
 
 @app.route("/addSong", methods=['Post', 'Get'])
 def addSong():
@@ -89,14 +118,14 @@ def searchSong():
 @app.route("/addSongName", methods=['Post', 'Get'])
 def addSongName():
     if request.method == 'Post':
-        artist=request.form['artName']
+        artist=request.form['artist_name']
         song=request.form['songName']
 
         mydb = ms.connect(
         host = "127.0.0.1",
         user = "root",
-        password = "Admin1234",
-        database = "db4710",
+        password = "Junebug05_",
+        database = "db4710_proj",
         )
         mycur=mydb.cursor()
 

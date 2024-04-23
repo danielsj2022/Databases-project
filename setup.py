@@ -15,7 +15,7 @@ try:
         for x in mycur:
             print(x)    
     
-except _mysql_connector.Error as e:
+except mysql.connector.Error as e:
     print("Error", e)
 
 
