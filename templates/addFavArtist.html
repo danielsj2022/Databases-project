@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+    <body>
+        <form action="{{url_for('addArtistName')}}" method="post">
+            <h1>Add Favorite Artist</h1>
+            <h2>Enter Artist Name</h2>
+            <div>
+                <label for="artName">Artist Name: </label>
+                <input type="text" id="artName" name="artName">
+            </div>
+            <div>
+                <label for="genre">Genre: </label>
+                <input type="text" id="genre" name="genre">
+            </div>
+            <div>
+                
+                <input type="submit">
+                
+            </div> 
+
+        </form>
+        <p><a href="/home">Back to home</a></p>
+    </body>
+</html>

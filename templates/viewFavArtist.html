@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>View Favorite Artist</h1>
+        <table border=1>
+            <thead>
+                <td>Artist</td>
+                <td>Genre</td>
+                
+            </thead>
+
+            {% for row in rows %}
+                <tr>
+                    
+                    <td>{{row[0]}}</td>
+                    <td>{{row[1]}}</td>
+                   
+                    
+                    </tr>
+            {% endfor %}    
+
+        </table>
+        <p><a href="/home">Back to home</a></p>
+    </body>
+</html>

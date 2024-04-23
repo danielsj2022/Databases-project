@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+    <body>
+        
+        <form action="{{ url_for('login')}}" method="post"> 
+            <h1>Login or Create account for MusicLib</h1>
+            <h2>Login</h2>
+            <div>
+                <label for="uname">username:</label>
+                <input type="text" id="uname" name="uname">
+            </div> 
+            <div>
+                <label for="password">password:</label>
+                <input type="text" name="password" id="password">
+            </div>
+            <h2>Create account</h2>
+            <div>
+                <label for="newuser">username:</label>
+                <input type="text" name="newuser" id="newuser">
+            </div>
+            <div>
+                <label for="newpass">password:</label>
+                <input type="text" name="newpass" id="newpass">
+            </div>
+            <div>
+                
+                <input type="submit">
+                
+            </div> 
+        </form>
+        
+        
+
+    </body>
+</html>

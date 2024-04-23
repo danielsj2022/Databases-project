@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+    <body>
+        <form action="{{url_for('searchSongName')}}" method="post">
+            <h1>Search Song</h1>
+        
+            <div>
+                <label for="songName">Song Name: </label>
+                <input type="text" id="songName" name="songName">
+            </div>
+            <div>
+                <label for="artName">Artist Name: </label>
+                <input type="text" name="artName" id="artName">
+            </div>
+            <div>
+                
+                <input type="submit">
+                
+            </div> 
+
+        </form>
+        <p><a href="/home">Back to home</a></p>
+    </body>
+</html>
