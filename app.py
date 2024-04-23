@@ -12,7 +12,7 @@ def homePage():
     return render_template('index.html')
 
 
-@app.route("/login",methods = ['Post', 'Get'])
+@app.route("/login",methods = ['POST', 'GET'])
 def login():
     if request.method == 'POST':
         logUser =""
@@ -117,7 +117,7 @@ def addSong():
 
     
 
-@app.route("/deleteSong", methods = ['Post', 'Get'])
+@app.route("/deleteSong", methods = ['POST', 'GET'])
 def deleteSong():
     
         song = 'Hey Jude'
@@ -156,7 +156,7 @@ def deleteSong():
 
         print(song, artist)
 
-@app.route("/searchSong", methods = ['Post', 'Get'])
+@app.route("/searchSong", methods = ['POST', 'GET'])
 def searchSong():
         song = 'Hey Jude'
         artist = 'The Beatles'
@@ -182,6 +182,33 @@ def searchSong():
         finally:
             mycur.close()
             mydb.close()
+
+@app.route("/viewFavArtist", methods = [ 'GET'])
+def viewFavArtist():
+    mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Gumball14!",
+        database = "db4710_proj",
+        )
+    mycur=mydb.cursor()
+
+    try:
+        mycur.execute("SELECT aname FROM artist")
+        artists = mycur.fetchall()
+
+        if not artists:
+            return "No artists were found"
+        
+        #display the artist
+        return render_template("viewFavArtist.html", rows=artists)
+    
+    except ms.Error as error:
+        print("Failed to show favorite artists:, error")
+        return "Database error occured: " + str(error)
+    finally:
+        mycur.close()
+        mydb.close()
 
         
 
