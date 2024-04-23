@@ -79,9 +79,11 @@ def addArtistName():
 @app.route("/addSong", methods=['Post', 'Get'])
 def addSong():
     return render_template("addSong.html")
+
 @app.route("/deleteSong", methods=['Post', 'Get'])
 def deleteSong():
     return render_template("deleteSong.html")
+
 @app.route("/searchSong", methods=['Post', 'Get'])
 def searchSong():
     return render_template("searchSong.html")
@@ -283,6 +285,46 @@ def addSongName():
         return render_template("add_song.html")
 
     return "Unsupported request method or failed to connect to the database"     
+
+@app.route("/recSongs")
+def recSongs():
+    mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Admin1234",
+        database = "db4710",
+        )
+    mycur=mydb.cursor()
+
+    try:
+        mycur.execute("SELECT aname FROM artist limit 5")
+        artists = mycur.fetchall()
+
+        if not artists:
+            msg ="No artists were found"
+            return render_template("result.html",msg = msg)
+        
+        for name in artists:
+            artName=str(name)
+            print("artist name: ", artName)
+            #api function call on artist name
+            #save songs
+            #add to table maybe
+            
+        return render_template("recSongs.html", rows=artists)
+    
+    except ms.Error as error:
+        print("Failed to show favorite artists:, error")
+        return "Database error occured: " + str(error)
+    finally:
+        mycur.close()
+        mydb.close()
+
+
+    #create list of 5 artist from table
+    #for each artist input into api call for songs
+    #append songs to other songs/ input into table
+    #fetch table and call html
 
 
 #login screen
