@@ -53,9 +53,9 @@ def login():
     
 @app.route("/addSong", methods=['POST', 'GET'])
 def addSong():
-    
-        song = 'Kill Bill'
-        artist = 'SZA'
+    if request.method == "POST":
+        song = request.form['songName']
+        artist = request.form['artName']
         mydb = ms.connect(
         host = "127.0.0.1",
         user = "root",
@@ -103,6 +103,15 @@ def addSong():
             if mydb.is_connected():
                 mycur.close()
                 mydb.close()
+                return render_template("index.html")
+            
+    elif request.method == "GET":
+        # Assume there's a template 'add_song.html' that contains the form for adding a song.
+        return render_template("add_song.html")
+
+    return "Unsupported request method or failed to connect to the database"     
+
+
 
 
 
@@ -111,8 +120,8 @@ def addSong():
 @app.route("/deleteSong", methods = ['Post', 'Get'])
 def deleteSong():
     
-        song = 'Snooze'
-        artist = 'SZA'
+        song = 'Hey Jude'
+        artist = 'The Beatles'
         mydb = ms.connect(
         host = "127.0.0.1",
         user = "root",
@@ -147,6 +156,32 @@ def deleteSong():
 
         print(song, artist)
 
+@app.route("/searchSong", methods = ['Post', 'Get'])
+def searchSong():
+        song = 'Hey Jude'
+        artist = 'The Beatles'
+        mydb = ms.connect(
+        host = "127.0.0.1",
+        user = "root",
+        password = "Gumball14!",
+        database = "db4710_proj",
+        )
+        mycur=mydb.cursor()
+
+        try:
+            #Check if the song and artist are in the writes table
+            mycur.execute("SELECT * FROM writes WHERE sname = %s AND aname = %s", (song, artist))
+            if mycur.fetchone() is None:
+                return "No such song and artist combination exists in the database."
+            
+            #show user the song and artist
+            return f"Artist: {artist}, Song: {song}"
+        except ms.Error as error:
+            print("Failed to search song:", error)
+            return "Database error occurred: " + str(error)
+        finally:
+            mycur.close()
+            mydb.close()
 
         
 
