@@ -99,6 +99,7 @@ def addSongName():
         database = "db4710",
         )
         mycur=mydb.cursor()
+        print("db connected")
 
         try:
             mycur.execute("SELECT * FROM writes WHERE sname = %s AND aname = %s", (song, artist))
@@ -127,9 +128,19 @@ def addSongName():
             mycur.execute("INSERT INTO writes (sname, aname) VALUES (%s, %s)", (song, artist))
             mydb.commit()  # Commit to save changes to the database
 
-            #return render_template("index.html")
-        finally:
             return render_template("index.html")
+        except ms.Error as error:
+            print("Failed to insert record into writes table: {}".format(error))
+            msg= "Database error occurred"
+        
+        finally:
+            if mydb.is_connected():
+                mycur.close()
+                mydb.close()
+                return render_template("index.html",msg=msg)
+        '''
+        finally:
+            return render_template("index.html")'''
 
 #login screen
 #home page
