@@ -63,44 +63,44 @@ def addArtistName():
             user="root",
             password="Junebug05_",
             database="db4710_proj",
-        )
-        mycur = mydb.cursor()
+            )
+            mycur = mydb.cursor()
 
-        try:
-            mycur.execute("SELECT * FROM writes WHERE aname = %s AND agenre = %s", (artist))
-            if mycur.fetchone() is not None:
-                return "This artist and genre combination already exists in the database."
+            try:
+                mycur.execute("SELECT * FROM writes WHERE aname = %s AND agenre = %s", (artist))
+                if mycur.fetchone() is not None:
+                    return "This artist and genre combination already exists in the database."
             
-            mycur.execute("SELECT * FROM artist WHERE sname = %s", (artist,))
-            artist_result = mycur.fetchone()
+                mycur.execute("SELECT * FROM artist WHERE sname = %s", (artist))
+                artist_result = mycur.fetchone()
 
-            if artist_result is None:
-                insert_artist_sql = "INSERT INTO artist (sname, genre) VALUES (%s,%s)"
-                mycur.execute(insert_artist_sql, (artist, genre))
+                if artist_result is None:
+                    insert_artist_sql = "INSERT INTO artist (sname, genre) VALUES (%s,%s)"
+                    mycur.execute(insert_artist_sql, (artist, genre))
+                    mydb.commit()
+
+                mycur.execute("INSERT INTO music (aname, ) VALUES (%s)", (artist))
                 mydb.commit()
 
-            mycur.execute("INSERT INTO music (aname, ) VALUES (%s, %s)", (artist))
-            mydb.commit()
+                mycur.execute("INSERT INTO writes (aname,) VALUES (%s)", (artist))
+                mydb.commit()  
 
-            mycur.execute("INSERT INTO writes (aname,) VALUES (%s, %s)", (artist))
-            mydb.commit()  
-
-            return "Artist added successfully"
+                return "Artist added successfully"
         
-        except ms.Error as error:
-            print("Failed to insert record into writes table: {}".format(error))
-            return "Database error occurred"
+            except ms.Error as error:
+                print("Failed to insert record into writes table: {}".format(error))
+                return "Database error occurred"
         
-        finally:
-            if mydb.is_connected():
-                mycur.close()
-                mydb.close()
-                return render_template("index.html")
+            finally:
+                if mydb.is_connected():
+                    mycur.close()
+                    mydb.close()
+                    return render_template("index.html")
             
-            elif request.method == "GET":
-                return render_template("addFavArtist.html")
+        elif request.method == "GET":
+            return render_template("addFavArtist.html")
 
-            return "Unsupported request method or failed to connect to the database"
+        return "Unsupported request method or failed to connect to the database"
     
 
         #where to add func for api and grab first name and genre to put in db if its already in rhe other table then insert
