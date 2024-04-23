@@ -59,7 +59,7 @@ def addArtist():
 def addArtistName():
     if request.method == 'POST':
         artistName=request.form['artName']
-        genre
+        genre = request.form['genre']
 
         #where to add func for api and grab first name and genre to put in db
 
@@ -69,12 +69,39 @@ def addArtistName():
         password = "Admin1234",
         database = "db4710",
         )
-        
         mycur=mydb.cursor()
+        try:
+            mycur.execute("SELECT * FROM artist WHERE aname = %s AND agenre = %s", (artistName, genre))
+            if mycur.fetchone() is not None:
+                msg= "This artist and genre combination already exists in the database."
+                return render_template("result.html",msg = msg)
+
+            mycur.execute("INSERT INTO artist (aname, agenre) VALUES (%s, %s)", (artistName, genre))
+            mydb.commit()
+
+            return render_template("index.html")
+        
+        except ms.Error as error:
+            print("Failed to insert record into writes table: {}".format(error))
+            msg= "Database error occurred"
+            return render_template("result.html",msg = msg)
+        
+        finally:
+            if mydb.is_connected():
+                mycur.close()
+                mydb.close()
+                #return render_template("index.html")
+            
+    elif request.method == "GET":
+        return render_template("addFavArtist.html")
+
+    return "Unsupported request method or failed to connect to the database"
+        
+    '''mycur=mydb.cursor()
         mycur.execute("insert into artist(aname, agenre) values (%s, %s)", (artistName, genre))
         mydb.commit()
 
-        return render_template("index.html")
+        return render_template("index.html")'''
 
 @app.route("/addSong", methods=['Post', 'Get'])
 def addSong():
@@ -150,7 +177,6 @@ def viewPlaylist():
         mydb.close()
 
 
-
 @app.route("/viewFavArtist")
 def viewFavArtist():
     #if request.method == 'POST':
@@ -163,7 +189,7 @@ def viewFavArtist():
     mycur=mydb.cursor()
 
     try:
-        mycur.execute("SELECT aname FROM artist")
+        mycur.execute("SELECT aname, agenre FROM artist")
         artists = mycur.fetchall()
 
         if not artists:
